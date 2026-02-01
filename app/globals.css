@@ -1,0 +1,253 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Blue and red color scheme */
+  --background: oklch(0.98 0 0);  /* Pure white */
+  --foreground: oklch(0.2 0.02 260);  /* Dark charcoal */
+  --card: oklch(0.99 0 0);  /* Off-white */
+  --card-foreground: oklch(0.2 0.02 260);
+  --popover: oklch(0.98 0 0);
+  --popover-foreground: oklch(0.2 0.02 260);
+  --primary: oklch(0.45 0.18 260);  /* Vibrant blue */
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.92 0.01 0);  /* Light gray */
+  --secondary-foreground: oklch(0.2 0.02 260);
+  --muted: oklch(0.88 0.01 0);  /* Medium gray */
+  --muted-foreground: oklch(0.45 0.02 260);
+  --accent: oklch(0.52 0.20 15);  /* Coral/red accent */
+  --accent-foreground: oklch(0.99 0 0);
+  --destructive: oklch(0.4 0.15 30);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.85 0.01 0);  /* Light gray border */
+  --input: oklch(0.96 0 0);
+  --ring: oklch(0.45 0.18 260);  /* Blue focus ring */
+  --chart-1: oklch(0.45 0.18 260);
+  --chart-2: oklch(0.52 0.20 15);
+  --chart-3: oklch(0.40 0.16 260);
+  --chart-4: oklch(0.48 0.17 260);
+  --chart-5: oklch(0.43 0.19 10);
+  --radius: 0.5rem;
+  --sidebar: oklch(0.98 0 0);
+  --sidebar-foreground: oklch(0.2 0.02 260);
+  --sidebar-primary: oklch(0.45 0.18 260);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.52 0.20 15);
+  --sidebar-accent-foreground: oklch(0.99 0 0);
+  --sidebar-border: oklch(0.85 0.01 0);
+  --sidebar-ring: oklch(0.45 0.18 260);
+}
+
+.dark {
+  /* Dark mode with blue and red accents */
+  --background: oklch(0.15 0.01 260);  /* Very dark blue */
+  --foreground: oklch(0.93 0.01 0);  /* Almost white */
+  --card: oklch(0.18 0.01 260);
+  --card-foreground: oklch(0.93 0.01 0);
+  --popover: oklch(0.15 0.01 260);
+  --popover-foreground: oklch(0.93 0.01 0);
+  --primary: oklch(0.60 0.20 260);  /* Bright blue */
+  --primary-foreground: oklch(0.15 0.01 260);
+  --secondary: oklch(0.25 0.01 0);
+  --secondary-foreground: oklch(0.93 0.01 0);
+  --muted: oklch(0.28 0.01 0);
+  --muted-foreground: oklch(0.65 0.01 0);
+  --accent: oklch(0.65 0.22 15);  /* Bright coral/red */
+  --accent-foreground: oklch(0.15 0.01 260);
+  --destructive: oklch(0.45 0.15 30);
+  --destructive-foreground: oklch(0.93 0.01 0);
+  --border: oklch(0.3 0.01 0);
+  --input: oklch(0.22 0.01 0);
+  --ring: oklch(0.60 0.20 260);
+  --chart-1: oklch(0.60 0.20 260);
+  --chart-2: oklch(0.65 0.22 15);
+  --chart-3: oklch(0.55 0.18 260);
+  --chart-4: oklch(0.62 0.19 260);
+  --chart-5: oklch(0.58 0.21 10);
+  --sidebar: oklch(0.18 0.01 260);
+  --sidebar-foreground: oklch(0.93 0.01 0);
+  --sidebar-primary: oklch(0.60 0.20 260);
+  --sidebar-primary-foreground: oklch(0.15 0.01 260);
+  --sidebar-accent: oklch(0.65 0.22 15);
+  --sidebar-accent-foreground: oklch(0.15 0.01 260);
+  --sidebar-border: oklch(0.3 0.01 0);
+  --sidebar-ring: oklch(0.60 0.20 260);
+}
+
+@theme inline {
+  /* Using IBM Plex Mono for authentic retro computing feel */
+  --font-sans: 'IBM Plex Mono', 'Courier New', monospace;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: 0;
+  --radius-md: 0.0625rem;
+  --radius-lg: 0.125rem;
+  --radius-xl: 0.125rem;
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom punch card hole pattern */
+@layer utilities {
+  .punch-card-holes {
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 19px,
+        oklch(0.35 0 0 / 0.15) 19px,
+        oklch(0.35 0 0 / 0.15) 20px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 9px,
+        oklch(0.35 0 0 / 0.08) 9px,
+        oklch(0.35 0 0 / 0.08) 10px
+      );
+  }
+  
+  .punch-hole {
+    @apply bg-primary/20 rounded-sm;
+  }
+  
+  .card-edge-holes {
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      transparent 2%, 
+      oklch(0.3 0 0 / 0.3) 2%, 
+      oklch(0.3 0 0 / 0.3) 4%, 
+      transparent 4%,
+      transparent 96%,
+      oklch(0.3 0 0 / 0.3) 96%,
+      oklch(0.3 0 0 / 0.3) 98%,
+      transparent 98%
+    );
+  }
+
+  /* Added vintage card effects for realistic aging */
+  .vintage-card {
+    position: relative;
+    background: linear-gradient(135deg, 
+      oklch(0.93 0.02 85) 0%, 
+      oklch(0.91 0.02 85) 50%, 
+      oklch(0.935 0.02 85) 100%
+    );
+  }
+
+  .dark .vintage-card {
+    background: linear-gradient(135deg, 
+      oklch(0.2 0 0) 0%, 
+      oklch(0.18 0 0) 50%, 
+      oklch(0.205 0 0) 100%
+    );
+  }
+
+  /* Paper texture overlay */
+  .vintage-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.015) 2px,
+        rgba(0, 0, 0, 0.015) 3px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.01) 2px,
+        rgba(0, 0, 0, 0.01) 3px
+      );
+    mix-blend-mode: multiply;
+  }
+
+  /* Worn edges effect */
+  .vintage-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    box-shadow: 
+      inset 0 0 20px rgba(139, 119, 101, 0.08),
+      inset 0 0 40px rgba(160, 140, 120, 0.05);
+    mix-blend-mode: multiply;
+  }
+
+  .vintage-overlay {
+    mix-blend-mode: multiply;
+    border-radius: inherit;
+  }
+
+  /* Added paper tape specific styles */
+  .paper-tape {
+    position: relative;
+    overflow: visible;
+  }
+
+  .paper-tape::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -3px;
+    right: -3px;
+    bottom: 0;
+    background: inherit;
+    filter: blur(1px);
+    opacity: 0.3;
+    z-index: -1;
+  }
+}
