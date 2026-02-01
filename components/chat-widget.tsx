@@ -50,7 +50,8 @@ export function ChatWidget() {
             {messages.length === 0 && (
               <div className="text-center text-sm text-muted-foreground mt-8">
                 <p>Hi! 👋</p>
-                <p className="mt-2">Ask me about Gurpreet's experience, skills, or projects!</p>
+                {/* <p className="mt-2">Ask me about Gurpreet's experience, skills, or projects!</p> */}
+                <p className="mt-2">Coming Soon!</p>
               </div>
             )}
 
@@ -86,8 +87,9 @@ export function ChatWidget() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your question..."
-                className="flex-1 px-3 py-2 text-sm border border-border rounded bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                disabled={status === 'streaming'}
+                className="disabled:cursor-not-allowed !pointer-events-auto flex-1 px-3 py-2 text-sm border border-border rounded bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                //disabled={status === 'streaming'}
+                disabled
               />
               <Button
                 type="submit"
