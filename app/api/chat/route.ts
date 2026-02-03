@@ -1,96 +1,139 @@
-import { streamText } from 'ai'
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { OpenRouter } from "@openrouter/sdk";
 
-// Your resume content extracted from the PDF
-const resumeContext = `
-GURPREET SINGH
-Montreal, QC | 647-891-2427 | gurpreet24277@gmail.com
-
-PROFESSIONAL EXPERIENCE
-
-Full Stack Developer - Société Générale
-August 2025 – Present | Montreal, QC
-- Crafted intuitive BI dashboards leveraging JavaScript and Node.js for 20+ team members
-- Built and maintained Self BI platform replacing Power BI, Tableau, and MicroStrategy
-- Customized AG Grid and Highcharts components with TypeScript for 18+ dynamic boards
-- Optimized system performance through asynchronous data loading and API query optimization
-
-Software Engineer - Mayfair Village Inc.
-February 2024 – July 2025 | Montreal, QC
-- Redesigned AI-powered web app with React, TypeScript, Tailwind CSS and Figma
-- Engineered OAuth 2.0 and SSO authentication for enterprise users
-- Integrated Stripe for real-time payments and automated billing (100+ transactions/month)
-- Improved code reliability with Jest and Playwright, reducing debugging time by 40%
-
-Software Engineer - Vistaar Technologies
-July 2019 – October 2021 | Mumbai, India
-- Redesigned Java Spring Boot microservices with AWS Lambda, EC2, and S3 (99% uptime)
-- Implemented JWT-based authentication and rate limiting in Java Spring Boot
-- Built responsive React frontend with optimization reducing page load from 4s to 1.5s
-- Migrated services from AWS to Azure and databases from Oracle to SQL Server, saving 30% costs
-
-EDUCATION
-
-Master of Applied Computer Science
-Concordia University | Montreal, QC | January 2022 – December 2023
-
-Bachelor of Engineering in Information Technology
-University of Mumbai | Mumbai, India | July 2015 – May 2019
-
-TECHNICAL SKILLS
-
-Languages: Python, Java, Go, JavaScript, TypeScript, HTML5, CSS, SQL
-Frontend: React.js, Tailwind CSS, Shadcn, MUI, Vite
-Backend: Node.js, Express, Java Spring Boot, GraphQL, REST API
-Databases: PostgreSQL, MongoDB, Oracle, Redis
-DevOps & Cloud: AWS, Google Cloud, GitHub Actions, Docker, Kubernetes
-Tools & Testing: Git, Jest, Playwright, Zustand, Redux, Storybook
-
-FEATURED PROJECTS
-
-Intelligent Search Orchestration Engine
-- Built a scalable React and TypeScript-based orchestration engine using Java Spring Boot for real-time job updates
-- Implemented keyword-based filtering algorithm improving search response by 10%
-- Docker containers and Docker Compose for job log storage and failover scripts
-- Ensured high availability with Cron-based backup automation
-
-Hospital Path Labeling
-- Optimized navigation for 300+ hospital rooms using custom graph labeling and connectivity algorithms
-- Identified 50+ cycles and 20+ bridges reducing computation by 40%
-- Improved pathfinding accuracy by 10x through graph-based relationship modeling
-`
-
-const linkedinContext = `
-LinkedIn Profile: https://www.linkedin.com/in/gp-singh-/
-
-Gurpreet Singh is a full-stack developer based in Montreal, QC with 5+ years of experience building scalable web applications and cloud infrastructure. Currently working at Société Générale on BI dashboard development. Specialized in React, Node.js, Java Spring Boot, AWS, Docker, and Kubernetes. Previous experience at Mayfair Village Inc. and Vistaar Technologies.
-`
+interface EmbeddingResponse {
+  data: { embedding: number[] }[];
+}
 
 export async function POST(req: Request) {
-  const { messages } = await req.json()
+  try {
+    // ✅ Create clients inside handler (prevents startup crashes)
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_KEY!
+    );
 
-  const systemPrompt = `You are Gurpreet Singh's AI assistant. You have access to their resume and LinkedIn profile information. 
-You should answer questions about their professional experience, skills, education, and projects based on the provided context.
-Be helpful, professional, and accurate. If you don't know something, be honest about it.
+    const openrouter = new OpenRouter({
+      apiKey: process.env.OPENAI_API_KEY!,
+    });
 
-RESUME CONTEXT:
-${resumeContext}
+    // ✅ Read request body
+    const body = await req.json();
+    const messages = body.messages;
 
-LINKEDIN CONTEXT:
-${linkedinContext}
+    if (!messages || messages.length === 0) {
+      return NextResponse.json(
+        { error: "No messages provided" },
+        { status: 400 }
+      );
+    }
 
-Guidelines:
-- Refer to specific experiences and achievements from the resume when relevant
-- Mention their current role and responsibilities
-- Highlight their technical expertise and accomplishments
-- Be conversational but professional
-- If asked about something not in the provided information, politely let them know
-`
+    // ✅ Extract last user message text (AI SDK format)
+    const lastMessage = messages[messages.length - 1];
 
-  const result = streamText({
-    model: 'openai/gpt-4o-mini',
-    system: systemPrompt,
-    messages,
-  })
+    const message =
+      lastMessage.parts?.find((p: any) => p.type === "text")?.text;
 
-  return result.toUIMessageStreamResponse()
+    if (!message || typeof message !== "string") {
+      return NextResponse.json(
+        { error: "Invalid message" },
+        { status: 400 }
+      );
+    }
+
+    // ================================
+    // 1️⃣ Generate Embedding
+    // ================================
+    const embeddingRes = (await openrouter.embeddings.generate({
+      model: "text-embedding-3-large",
+      input: message,
+    })) as EmbeddingResponse;
+
+    const queryEmbedding = embeddingRes.data[0].embedding;
+
+    // ================================
+    // 2️⃣ Search Supabase (Vector Match)
+    // ================================
+    const { data: matches, error } = await supabase.rpc(
+      "match_documents",
+      {
+        query_embedding: queryEmbedding,
+        match_count: 5,
+        filter: {},
+      }
+    );
+
+    if (error) {
+      console.error("Supabase match_documents error:", error);
+      return NextResponse.json(
+        { error: "Vector search failed" },
+        { status: 500 }
+      );
+    }
+
+    // ================================
+    // 3️⃣ Handle Low Similarity
+    // ================================
+    const THRESHOLD = 0.5;
+    const topMatch = matches?.[0];
+
+    if (!matches || matches.length === 0 || topMatch.similarity < THRESHOLD) {
+      return NextResponse.json({
+        text: `I can help you with questions about Gurpreet's portfolio, such as work experience, projects, skills, and education. Please ask something related to that.`,
+      });
+    }
+
+    // ================================
+    // 4️⃣ Build Context
+    // ================================
+    const contextText = matches
+      .map((m: any) => m.content)
+      .join("\n\n---\n\n");
+
+    const systemPrompt = `
+You are Gurpreet Singh's AI assistant. 
+You have access to his resume and LinkedIn information. 
+Answer professionally and accurately based only on the provided context.
+If something is not in the context, say you don't know.
+`.trim();
+
+    const userPrompt = `
+Context:
+${contextText}
+
+User Question:
+${message}
+
+Answer clearly and professionally.
+`.trim();
+
+    // ================================
+    // 5️⃣ Generate Final Response
+    // ================================
+    const completion = await openrouter.chat.send({
+      model: "openai/gpt-4o-mini",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      temperature: 0.4,
+    });
+
+    const answer =
+      completion.choices[0]?.message?.content ??
+      "Sorry, I couldn't generate a response.";
+
+    // ✅ IMPORTANT: Must return `text` for ai-sdk
+    return NextResponse.json({
+      text: answer,
+    });
+  } catch (err) {
+    console.error("API ERROR:", err);
+
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
+  }
 }
