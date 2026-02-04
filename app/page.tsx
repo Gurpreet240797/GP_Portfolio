@@ -1,6 +1,6 @@
-import { Card } from '@/components/ui/card'
-import Link from 'next/link'
-import Image from 'next/image'
+import { Card } from "@/components/ui/card";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -10,9 +10,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between gap-6">
             <div>
-              <h1 className="text-3xl font-bold">
-                Gurpreet Singh
-              </h1>
+              <h1 className="text-3xl font-bold">Gurpreet Singh</h1>
               <p className="text-muted-foreground text-lg mt-1">
                 Full Stack Developer | Montreal, QC
               </p>
@@ -65,12 +63,17 @@ export default function Home() {
             ABOUT_ME
           </h2>
           <p className="text-foreground/80 leading-relaxed mb-4 text-base">
-            I'm a Full Stack Developer based in Montreal, QC, with 4+ years of experience building scalable web applications and cloud infrastructure. 
-            My journey in software development started with a passion for solving complex problems and creating elegant solutions.
+            I'm a Full Stack Developer based in Montreal, QC, with 4+ years of
+            experience building scalable web applications and cloud
+            infrastructure. My journey in software development started with a
+            passion for solving complex problems and creating elegant solutions.
           </p>
           <p className="text-foreground/80 leading-relaxed text-base">
-            I specialize in modern JavaScript/TypeScript ecosystems, Java backends, and cloud technologies. I'm particularly interested in performance optimization, 
-            system design, and building products that users love. Currently, I'm at Société Générale building intelligent BI dashboards for enterprise users.
+            I specialize in modern JavaScript/TypeScript ecosystems, Java
+            backends, and cloud technologies. I'm particularly interested in
+            performance optimization, system design, and building products that
+            users love. Currently, I'm at Société Générale building intelligent
+            BI dashboards for enterprise users.
           </p>
         </section>
 
@@ -85,28 +88,44 @@ export default function Home() {
             EXPLORE
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Link href="/about" className="group">
+            <Link href="/education" className="group">
               <Card className="p-6 border border-border hover:border-primary hover:bg-secondary transition-all cursor-pointer">
-                <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">📚 Education</h3>
-                <p className="text-foreground/70 text-base">Learn more about my background and education</p>
+                <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">
+                  📚 Education
+                </h3>
+                <p className="text-foreground/70 text-base">
+                  Learn more about my background and education
+                </p>
               </Card>
             </Link>
             <Link href="/work" className="group">
               <Card className="p-6 border border-border hover:border-primary hover:bg-secondary transition-all cursor-pointer">
-                <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">💼 Work Experience</h3>
-                <p className="text-foreground/70 text-base">View my professional journey and achievements</p>
+                <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">
+                  💼 Work Experience
+                </h3>
+                <p className="text-foreground/70 text-base">
+                  View my professional journey and achievements
+                </p>
               </Card>
             </Link>
             <Link href="/projects" className="group">
               <Card className="p-6 border border-border hover:border-primary hover:bg-secondary transition-all cursor-pointer">
-                <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">🚀 Projects</h3>
-                <p className="text-foreground/70 text-md">See what I've built and worked on</p>
+                <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">
+                  🚀 Projects
+                </h3>
+                <p className="text-foreground/70 text-md">
+                  See what I've built and worked on
+                </p>
               </Card>
             </Link>
             <Link href="/skills" className="group">
               <Card className="p-6 border border-border hover:border-primary hover:bg-secondary transition-all cursor-pointer">
-                <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">⚙️ Skills</h3>
-                <p className="text-foreground/70 text-base">Discover my technical expertise</p>
+                <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">
+                  ⚙️ Skills
+                </h3>
+                <p className="text-foreground/70 text-base">
+                  Discover my technical expertise
+                </p>
               </Card>
             </Link>
           </div>
@@ -125,24 +144,36 @@ export default function Home() {
           </h2>
           <Card className="p-8 border border-primary/30 bg-secondary/50">
             <p className="text-foreground/80 mb-6 text-base">
-              I'm always interested in hearing about new projects and opportunities. Feel free to reach out!
+              I'm always interested in hearing about new projects and
+              opportunities. Feel free to reach out!
             </p>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <span className="font-semibold text-primary">📧 Email:</span>
-                <a href="mailto:gurpreet24277@gmail.com" className="text-primary hover:underline">
+                <a
+                  href="mailto:gurpreet24277@gmail.com"
+                  className="text-primary hover:underline"
+                >
                   gurpreet24277@gmail.com
                 </a>
               </div>
               <div className="flex items-center gap-3">
                 <span className="font-semibold text-primary">📱 Phone:</span>
-                <a href="tel:+16478912427" className="text-primary hover:underline">
+                <a
+                  href="tel:+16478912427"
+                  className="text-primary hover:underline"
+                >
                   647-891-2427
                 </a>
               </div>
               <div className="flex items-center gap-3">
                 <span className="font-semibold text-primary">🔗 LinkedIn:</span>
-                <a href="https://www.linkedin.com/in/gp-singh-/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                <a
+                  href="https://www.linkedin.com/in/gp-singh-/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
                   linkedin.com/in/gp-singh-
                 </a>
               </div>
@@ -153,7 +184,7 @@ export default function Home() {
             </div>
           </Card>
         </section>
-        
+
         {/* Footer */}
         <footer className="border-t-4 border-primary/30 card-edge-holes pt-8 mt-16 text-center relative z-10">
           <div className="flex justify-center gap-2 mb-3">
@@ -167,5 +198,5 @@ export default function Home() {
         </footer>
       </main>
     </div>
-  )
+  );
 }

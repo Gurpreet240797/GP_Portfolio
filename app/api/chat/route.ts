@@ -30,9 +30,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // ================================
-    // 1️⃣ Generate Embedding
-    // ================================
+    /**
+     * 1. Generate Embedding
+     */
     const embeddingRes = await openrouter.embeddings.generate({
       model: "text-embedding-3-large",
       input: message,
@@ -59,9 +59,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // ================================
-    // 2️⃣ Vector Search
-    // ================================
+    /**
+     * 2. Vector Search
+     */
     const { data: matches, error } = await supabase.rpc("match_documents", {
       query_embedding: queryEmbedding,
       match_count: 5,
@@ -76,9 +76,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // ================================
-    // 3️⃣ Similarity Check
-    // ================================
+    /**
+     * 3. Similarity Check
+     */
     const THRESHOLD = 0.5;
     const topMatch = matches?.[0];
 
@@ -88,9 +88,9 @@ export async function POST(req: Request) {
       });
     }
 
-    // ================================
-    // 4️⃣ Build Context
-    // ================================
+    /**
+     * 4. Build Context
+     */
     const contextText = matches.map((m: any) => m.content).join("\n\n---\n\n");
 
     const systemPrompt = `
@@ -110,9 +110,9 @@ ${message}
 Answer clearly and professionally.
 `.trim();
 
-    // ================================
-    // 5️⃣ Generate Final Answer
-    // ================================
+    /**
+     * 5. Generate Final Answer
+     */
     const completion = await openrouter.chat.send({
       model: "openai/gpt-4o-mini",
       messages: [

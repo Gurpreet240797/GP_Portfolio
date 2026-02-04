@@ -66,13 +66,35 @@ export function ChatWidget() {
       {isOpen && (
         <Card className="w-[28rem] h-[50rem] shadow-xl border-2 border-primary/30 flex flex-col bg-card mb-3">
           {/* Header */}
-          <div className="border-b border-primary/20 pt-2 px-4 pb-3 bg-card/80">
-            <h3 className="font-bold text-foreground">
-              Ask me anything! (BETA)
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              Powered by Gurpreet's Resume and LinkedIn
-            </p>
+          <div className="flex items-start justify-between border-b border-primary/20 bg-card/80 px-4 pt-2 pb-2">
+            <div>
+              <h3 className="font-bold text-foreground text-sm">
+                Ask me anything! <span className="italic">(BETA)</span>
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Powered by Gurpreet's Resume and LinkedIn
+              </p>
+            </div>
+
+            <Button
+              onClick={() => setIsOpen(false)}
+              className="rounded-full w-10 h-10 bg-primary cursor-pointer flex items-center justify-center -mt-2"
+              size="icon"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </Button>
           </div>
 
           {/* Messages */}
@@ -139,26 +161,12 @@ export function ChatWidget() {
       )}
 
       {/* Toggle Button */}
-      <Button
-        onClick={() => setIsOpen(!isOpen)}
-        className="rounded-full w-14 h-14 shadow-lg bg-primary hover:bg-primary/80 text-primary-foreground flex items-center justify-center"
-        size="icon"
-      >
-        {isOpen ? (
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        ) : (
+      {!isOpen && (
+        <Button
+          onClick={() => setIsOpen(!isOpen)}
+          className="rounded-full w-14 h-14 shadow-lg bg-primary cursor-pointer hover:bg-primary/80 text-primary-foreground flex items-center justify-center"
+          size="icon"
+        >
           <svg
             className="w-6 h-6"
             fill="none"
@@ -172,8 +180,8 @@ export function ChatWidget() {
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
             />
           </svg>
-        )}
-      </Button>
+        </Button>
+      )}
     </div>
   );
 }
