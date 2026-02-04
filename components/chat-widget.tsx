@@ -1,83 +1,113 @@
-'use client'
+"use client";
 
-import React from "react"
+import React, { useState, useRef, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
-import { useChat } from '@ai-sdk/react'
-import { DefaultChatTransport } from 'ai'
-import { useState, useRef, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
+type ChatMessage = { role: "user" | "assistant"; text: string };
 
 export function ChatWidget() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [input, setInput] = useState('')
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-
-  const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({
-      api: '/api/chat',
-    }),
-  })
+  const [isOpen, setIsOpen] = useState(false);
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    scrollToBottom();
+  }, [messages]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!input.trim()) return
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
 
-    setInput('')
-    await sendMessage({ text: input })
-  }
+    const userText = input.trim();
+    setInput("");
+    setMessages((prev) => [...prev, { role: "user", text: userText }]);
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userText }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            text: data.error ?? "Something went wrong.",
+          },
+        ]);
+        return;
+      }
+
+      const reply = typeof data.text === "string" ? data.text : "No response.";
+      setMessages((prev) => [...prev, { role: "assistant", text: reply }]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", text: "Failed to get a response." },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {isOpen && (
-        <Card className="w-96 h-96 shadow-xl border-2 border-primary/30 flex flex-col bg-card mb-3">
+        <Card className="w-[28rem] h-[50rem] shadow-xl border-2 border-primary/30 flex flex-col bg-card mb-3">
           {/* Header */}
-          <div className="border-b border-primary/20 p-4 bg-card/80">
-            <h3 className="font-bold text-foreground">Ask me anything!</h3>
-            <p className="text-xs text-muted-foreground">Powered by Gurpreet's resume & LinkedIn</p>
+          <div className="border-b border-primary/20 pt-2 px-4 pb-3 bg-card/80">
+            <h3 className="font-bold text-foreground">
+              Ask me anything! (BETA)
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              Powered by Gurpreet's Resume and LinkedIn
+            </p>
           </div>
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.length === 0 && (
               <div className="text-center text-sm text-muted-foreground mt-8">
-                <p>Hi! 👋</p>
-                <p className="mt-2">Ask me about Gurpreet's experience, skills, or projects!</p>
+                <p>
+                  Hi, Welcome to personalized <b>GP-AI</b> 👋
+                </p>
+                <p className="mt-2">
+                  Ask me about Gurpreet's experience, skills, or projects!
+                </p>
+                <p className="mt-2 italic underline">
+                  This feature is experimental and still improving
+                </p>
               </div>
             )}
-            {messages.map((message, idx) => {
-              const text = message.parts
-                ?.filter((p) => p.type === "text")
-                .map((p) => p.text)
-                .join("") ?? "";
-
-                return (
-                  <div
-                    key={idx}
-                    className={`flex ${
-                      message.role === "user" ? "justify-end" : "justify-start"
-                    }`}
-                  >
-                  <div
-                      className={`max-w-xs px-3 py-2 rounded-lg text-sm ${
-                      message.role === "user"
+            {messages.map((message, idx) => (
+              <div
+                key={idx}
+                className={`flex ${
+                  message.role === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div
+                  className={`max-w-xs px-3 py-2 rounded-lg text-sm ${
+                    message.role === "user"
                       ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-foreground"
-                    }`}
-                    >
-                    {text}
-                  </div>
+                      : "bg-muted text-foreground"
+                  }`}
+                >
+                  {message.text}
                 </div>
-              );
-            })}
+              </div>
+            ))}
             <div ref={messagesEndRef} />
           </div>
 
@@ -93,13 +123,13 @@ export function ChatWidget() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your question..."
                 className="flex-1 px-3 py-2 text-sm border border-border rounded bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                disabled={status === 'streaming'}
+                disabled={isLoading}
               />
               <Button
                 type="submit"
                 size="sm"
                 className="bg-primary hover:bg-primary/80 text-primary-foreground"
-                disabled={status === 'streaming' || !input.trim()}
+                disabled={isLoading || !input.trim()}
               >
                 Send
               </Button>
@@ -145,5 +175,5 @@ export function ChatWidget() {
         )}
       </Button>
     </div>
-  )
+  );
 }
